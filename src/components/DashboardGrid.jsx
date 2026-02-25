@@ -13,11 +13,17 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useState } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import StatCard from './widgets/StatCard';
 import StorageWidget from './widgets/StorageWidget';
 import FileSharingWidget from './widgets/FileSharingWidget';
 import ActiveUsersWidget from './widgets/ActiveUsersWidget';
+import DeviceManagementWidget from './widgets/DeviceManagementWidget';
+import ProductivityReportWidget from './widgets/ProductivityReportWidget';
+import OnlineUsersWidget from './widgets/OnlineUsersWidget';
+import AppActivityReportWidget from './widgets/AppActivityReportWidget';
+import WebActivityReportWidget from './widgets/WebActivityReportWidget';
 
 const WIDGET_CONFIG = {
   users: {
@@ -55,7 +61,14 @@ const WIDGET_CONFIG = {
     props: {},
     className: 'min-w-0',
   },
+  'device-management': {
+    component: DeviceManagementWidget,
+    props: {},
+    className: 'min-w-0 col-span-full',
+  },
 };
+
+const CLOUD_NETWORK_IDS = ['users', 'groups', 'uploads', 'departments', 'storage', 'file-sharing', 'active-users'];
 
 function SortableWidget({ id }) {
   const config = WIDGET_CONFIG[id];
@@ -101,6 +114,7 @@ function SortableWidget({ id }) {
 
 export default function DashboardGrid() {
   const { widgetOrder, moveWidget } = useDashboard();
+  const [cloudNetworkOpen, setCloudNetworkOpen] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -121,10 +135,60 @@ export default function DashboardGrid() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={widgetOrder} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-6">
-          {widgetOrder.map((id) => (
-            <SortableWidget key={id} id={id} />
-          ))}
+        <div className="pt-1.5">
+        <div className="mb-6 rounded-lg border border-slate-200 bg-white overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setCloudNetworkOpen((o) => !o)}
+            className="w-full flex items-center justify-between gap-2 px-6 py-4 text-left hover:bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+            aria-expanded={cloudNetworkOpen}
+            aria-label={cloudNetworkOpen ? 'Collapse Cloud Network' : 'Expand Cloud Network'}
+          >
+            <div className="flex items-center gap-2">
+              <svg className="h-5 w-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+              </svg>
+              <h1 className="text-lg font-semibold text-slate-800">Cloud Network</h1>
+            </div>
+            <svg className={`h-5 w-5 shrink-0 text-slate-500 transition-transform ${cloudNetworkOpen ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {cloudNetworkOpen && (
+            <>
+              <div className="px-6 pb-2 flex items-center gap-2 text-sm text-slate-500">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span>Dashboard</span>
+              </div>
+              <div className="px-4 pb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1.5 items-start">
+                  {widgetOrder.filter((id) => CLOUD_NETWORK_IDS.includes(id)).map((id) => (
+                    <SortableWidget key={id} id={id} />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        {/* Device Management: separate section, same full width as Cloud Network */}
+        <div className="pb-6">
+          <DeviceManagementWidget />
+        </div>
+        {/* Productivity Report: separate section, collapsible */}
+        <div className="pb-6">
+          <ProductivityReportWidget />
+        </div>
+        {/* Online Users: table with row reorder */}
+        <div className="pb-6">
+          <OnlineUsersWidget />
+        </div>
+        {/* App Activity + Web Activity: side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pb-6">
+          <AppActivityReportWidget />
+          <WebActivityReportWidget />
+        </div>
         </div>
       </SortableContext>
     </DndContext>

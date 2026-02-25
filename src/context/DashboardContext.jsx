@@ -3,9 +3,9 @@ import { createContext, useContext, useState, useCallback } from 'react';
 const WIDGET_IDS = [
   'users',
   'groups',
-  'storage',
   'uploads',
   'departments',
+  'storage',
   'file-sharing',
   'active-users',
 ];
