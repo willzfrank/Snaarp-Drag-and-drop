@@ -35,7 +35,7 @@ Open [http://localhost:5173](http://localhost:5173) (or the port Vite prints).
 - **Accessibility:** Sortable items are focusable with keyboard (Space + arrows). Grip icon and `aria-label` on draggable elements.
 - **Map:** Active Users uses Leaflet with OSM tiles; no API key required. Colored div icons for user pins.
 
-## Structure
+## Structure.
 
 - `src/context/DashboardContext.jsx` — Cloud Network widget order state and `moveWidget`.
 - `src/components/DashboardGrid.jsx` — Cloud Network (collapsible + SortableContext), then Device Management, Productivity Report, Online Users, and App/Web Activity sections.
