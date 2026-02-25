@@ -1,0 +1,9 @@
+---
+description: Do not use git or add Cursor as co-author
+alwaysApply: true
+---
+
+# Git and commits
+
+- Do not run any git commands (clone, commit, push, pull, rebase, amend, etc.). The user will handle all version control.
+- Do not add "Co-authored-by" or any Cursor/cursoragent attribution to commit messages. If the user asks you to prepare a commit message, provide plain text only with no co-author trailers.
